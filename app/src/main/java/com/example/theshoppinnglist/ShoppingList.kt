@@ -37,7 +37,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
-data class ShoppingItem(val id: Int, var name: String, var quantity: Int, var isEditing: Boolean = false)
+data class ShoppingItem(val id: Int, var name: String, var quantity: String, var isEditing: Boolean = false)
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -72,7 +72,7 @@ fun ShoppingListApp() {
                             val editedItem = sItems.find { it.id == item.id }
                             editedItem?.let {
                                 it.name = editedName
-                                it.quantity = editedQuantity
+                                it.quantity = editedQuantity.toString()
                             }
                         }
                     )
@@ -129,7 +129,7 @@ fun ShoppingListApp() {
                                 val newItem = ShoppingItem(
                                     id = sItems.size + 1,
                                     name = itemName,
-                                    quantity = itemQuantity.toInt()
+                                    quantity = itemQuantity
                                 )
                                 sItems = sItems + newItem
                                 showDialog = false
@@ -187,9 +187,9 @@ fun ShoppingListItem(item: ShoppingItem,
 }
 
 @Composable
-fun ShoppingItemEditor(item: ShoppingItem,onEditComplete: (String, Int) -> Unit) {
+fun ShoppingItemEditor(item: ShoppingItem,onEditComplete: (String, String) -> Unit) {
     var editedName by remember { mutableStateOf(item.name) }
-    var editedQuantity by remember { mutableStateOf(item.quantity.toString()) }
+    var editedQuantity by remember { mutableStateOf(item.quantity) }
     var isEditing by remember { mutableStateOf(item.isEditing) }
     Row(
         modifier = Modifier
@@ -222,7 +222,7 @@ fun ShoppingItemEditor(item: ShoppingItem,onEditComplete: (String, Int) -> Unit)
         Button(
             onClick = {
                 isEditing = false
-                onEditComplete(editedName, editedQuantity.toIntOrNull() ?: 1)
+                onEditComplete(editedName, editedQuantity)
             }
         ) {
             Text("Save", fontSize = 18.sp)
